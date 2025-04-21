@@ -1,11 +1,13 @@
 ---
-title: "homework_8"
+title: "homework_9"
 author: "Aurna Mukherjee (am96848)"
-date: "2025-04-09"
+date: "2025-04-20"
 output:
   pdf_document: default
   html_document: default
 ---
+
+[Link to Github](https://github.com/aurnam18/hw9)
 
 ```{r setup, include=FALSE, results='hide'}
 knitr::opts_chunk$set(echo = FALSE)
@@ -39,11 +41,11 @@ The baseline reaction for a large opening and thick Solder type is 0.39. The mai
 
 The interaction effect for `OpeningM` and `SolderThin` is -0.74. This is the additional effect besides the individual effects of a medium opening and thin Solder size. The interaction effect for `OpeningS` and `SolderThin` is 5.1267. This is the additional effect besides the individual effects of a small opening and thin Solder size.
 
-I would recommend a medium opening and thin soldering thickness, as this reduces the baseline by 0.74 skips.
+I would recommend a medium opening and thin soldering thickness, as this reduces the baseline by 0.74 skips. Writing this out as an equation, large opening and thick soldering would only include intercept 0.39. But medium opening and thin soldering would be 0.39+2.4+2.8-0.74, which is significantly greater than the baseline.
 
 # **Problem 2**
 
-```{r}
+```{r echo=FALSE}
 groceries <- read_csv("~/Documents/sem 2 stats/groceries.csv")
 
 #Part A
@@ -87,7 +89,7 @@ get_regression_table(model)
 
 Part C: Compared to ordinary grocery stores, convenience stores charge somewhere between 0.41 and 0.92 dollars more for the same product.
 
-```{r}
+```{r echo=FALSE}
 lm(Price ~ Product + Store, data=groceries)
 ```
 
@@ -95,7 +97,7 @@ Part D: Walmart and StoreKroger Fresh Fare seem to charge the lowest price when 
 
 Part E: Central Market charges more than HEB for the same product. We can conclude this because the offset amount for HEB is -0.65, while the offset amount for Central Market is -0.57, meaning that HEB prices are relatively cheaper for the same product. The HEB to Central Market difference is 0.08, which isn't a huge difference compared to the deltas of some of the other stores.
 
-```{r}
+```{r echo=FALSE}
 groceries <- groceries %>%
   mutate(Income10K = Income / 10000)
 
@@ -106,12 +108,14 @@ Part F: Since Income10K has a negative coefficient, it indicates that as income 
 
 # **Problem 3**
 
-A. True - Figure A1 demonstrates a positive relationship between minority residents and FAIR policies per 100 residents. Also, the regression table shows that minority residents are 0.014 more likely fair policies per 100 residents on average.
+A. True - Figure A1 demonstrates a positive linear relationship between minority residents and FAIR policies per 100 residents. Also, the regression table shows that minority residents are 0.014 more likely fair policies per 100 residents on average. Our confidence interval for the minority coefficient also does not include 0,
 
-B. False - We can't conclude this because there isn't an interaction between minority and age included in a linear model, making it difficult to find the coefficient.
+B. False - We can't conclude this because there isn't an interaction effect between minority and age included in a linear model, making it difficult to find the coefficient. When the model was fitted to include an interaction between minority and age, we could check for a significant effect.
 
-C. True - The regression table shows a slightly lower expected value in lower fire risk areas. Figure C1 also corroborates this with the lower line having a lower intercept.
+C. Undecidable - Figure C1 shows almost parallel slopes for the low and high fire risks, showing that the effect of minority percentage on FAIR policy seems similar for both fire risks. Also, the confidence interval contains 0, so we cannot conclude that either group has a stronger relationship between minority percentage and number of FAIR policies.
 
-D. False - Model E shows that the other variables also have an impact on Fair policy uptake. For example, fire risk and age also impact the association between minority percentage and FAIR policy uptake.
+D. False - Model E shows that income does not "explain away" ALL the association between minority percentage and FAIR policy uptake. The association between minority percentage and FAIR policy uptake weakens when controlling for income (goes from 0.014 to 0.01), but does not completely get rid of the association. Since the confidence interval does not contain 0, income does not explain away the association between minority percentage and FAIR policy uptake.
+
+When we control for income, the association between minority and policy becomes slightly weaker. However, the confidence interval is positive, between 0.04 to 0.15, so there is still a reasonable association between minority and policy.
 
 E. True - Since the P-value for minority in model E is significantly less than 0.05 (0.006), there is sufficient evidence that minority percentage and number of fair policies are still associated at the ZIP code level.
