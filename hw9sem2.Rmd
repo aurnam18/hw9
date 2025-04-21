@@ -1,0 +1,117 @@
+---
+title: "homework_8"
+author: "Aurna Mukherjee (am96848)"
+date: "2025-04-09"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE, results='hide'}
+knitr::opts_chunk$set(echo = FALSE)
+library(ggplot2)
+library(tidyverse)
+library(kableExtra)
+library(mosaic)
+library(MatchIt)
+library(moderndive)
+```
+
+# **Problem 1**
+
+```{r echo=FALSE}
+library(readr)
+solder <- read_csv("~/Documents/sem 2 stats/solder.csv")
+ggplot(solder) +
+  geom_col(aes(x=Opening, y=skips), fill="blue") +
+  labs(title = "Correlation between opening and skips")
+
+ggplot(solder) +
+  geom_col(aes(x=Solder, y=skips), fill="purple") +
+  labs(title = "Correlation between opening and skips")
+
+x <- lm(skips ~ Opening + Solder + Opening:Solder, data=solder)
+confint(x, level=0.95)
+get_regression_table(x, conf.level = 0.95, digits=2)
+```
+
+The baseline reaction for a large opening and thick Solder type is 0.39. The main effect for the size of the opening variable being medium is 2.4. The main effect for the size of the opening variable being small is 5.13. The main effect for the Solder type being thin is 2.28.
+
+The interaction effect for `OpeningM` and `SolderThin` is -0.74. This is the additional effect besides the individual effects of a medium opening and thin Solder size. The interaction effect for `OpeningS` and `SolderThin` is 5.1267. This is the additional effect besides the individual effects of a small opening and thin Solder size.
+
+I would recommend a medium opening and thin soldering thickness, as this reduces the baseline by 0.74 skips.
+
+# **Problem 2**
+
+```{r}
+groceries <- read_csv("~/Documents/sem 2 stats/groceries.csv")
+
+#Part A
+store_avg_price <- groceries %>%
+  group_by(Store) %>%
+  summarize(avg_price = mean(Price, na.rm = TRUE))
+
+ggplot(store_avg_price, aes(x = reorder(Store, avg_price), y = avg_price)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  labs(
+    x = "Store",
+    y = "Average Product Price ($)",
+    title = "Average Product Price by Store",
+    caption = "This plot shows the average price of products sold at each store. 
+               Prices vary across stores, indicating potential differences in product quality, brand offerings, or pricing strategy."
+  ) +
+  theme_minimal()
+
+#Part B
+store_by_total <- groceries %>%
+  group_by(Product) %>%
+  summarize(num_stores = n())
+
+ggplot(store_by_total, aes(x = reorder(Product, num_stores), y = num_stores)) +
+  geom_bar(stat = "identity", fill = "steelblue") +
+  coord_flip() +
+  labs(
+    x = "Product",
+    y = "Number of Stores",
+    title = "Product Selling Distribution By Number of Stores",
+    ) +
+  theme_minimal()
+
+#Part C
+model <- lm(Price ~ Product + Type, data=groceries)
+summary(model)
+confint(model)
+get_regression_table(model)
+```
+
+Part C: Compared to ordinary grocery stores, convenience stores charge somewhere between 0.41 and 0.92 dollars more for the same product.
+
+```{r}
+lm(Price ~ Product + Store, data=groceries)
+```
+
+Part D: Walmart and StoreKroger Fresh Fare seem to charge the lowest price when comparing the same product. Whole Foods and the Wheatsville Food Co-Op seem to charge the highest price when comparing the same product.
+
+Part E: Central Market charges more than HEB for the same product. We can conclude this because the offset amount for HEB is -0.65, while the offset amount for Central Market is -0.57, meaning that HEB prices are relatively cheaper for the same product. The HEB to Central Market difference is 0.08, which isn't a huge difference compared to the deltas of some of the other stores.
+
+```{r}
+groceries <- groceries %>%
+  mutate(Income10K = Income / 10000)
+
+lm(Price ~ Product + Income10K, data = groceries)
+```
+
+Part F: Since Income10K has a negative coefficient, it indicates that as income increases, price decreases so those who have a higher income are paying less.
+
+# **Problem 3**
+
+A. True - Figure A1 demonstrates a positive relationship between minority residents and FAIR policies per 100 residents. Also, the regression table shows that minority residents are 0.014 more likely fair policies per 100 residents on average.
+
+B. False - We can't conclude this because there isn't an interaction between minority and age included in a linear model, making it difficult to find the coefficient.
+
+C. True - The regression table shows a slightly lower expected value in lower fire risk areas. Figure C1 also corroborates this with the lower line having a lower intercept.
+
+D. False - Model E shows that the other variables also have an impact on Fair policy uptake. For example, fire risk and age also impact the association between minority percentage and FAIR policy uptake.
+
+E. True - Since the P-value for minority in model E is significantly less than 0.05 (0.006), there is sufficient evidence that minority percentage and number of fair policies are still associated at the ZIP code level.
